@@ -1,165 +1,200 @@
 import 'package:flutter/material.dart';
 
-class CAuthorization extends StatefulWidget {
+class CAuthorization extends StatelessWidget {
   const CAuthorization({Key? key}) : super(key: key);
 
-  @override
-  State<CAuthorization> createState() => _CAuthorizationState();
-}
-
-class _CAuthorizationState extends State<CAuthorization> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-        body: Container(
-          child: Column(
-            children: [
-              SizedBox(
-                child: Container(
-                  decoration: const BoxDecoration(
-                    color: Color.fromARGB(255, 158, 206, 244),
-                    borderRadius: BorderRadius.only(
+      body: Column(
+          children: [
+            Container(
+              decoration: const BoxDecoration(
+                  color: Color.fromARGB(255, 158, 206, 244),
+                  borderRadius: BorderRadius.only(
                       bottomLeft: Radius.circular(25),
                       bottomRight: Radius.circular(25)
-                    )
-                  ),
-                ),
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height * 0.35,
+                  )
               ),
-              Container(
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height * 0.45,
-                alignment: Alignment.bottomCenter,
-                child: Column(
-                  children: [
-                    Container(
-                      child: const Text(
-                        "Авторизация",
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 28
+              height: MediaQuery.of(context).size.height * 0.35,
+            ),
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.05,
+            ),
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.065,
+              child: SizedBox(
+                width: MediaQuery.of(context).size.width * 0.35,
+                child: const FittedBox(
+                    fit: BoxFit.fitHeight,
+                    clipBehavior: Clip.none,
+                    child: Text('Авторизация')
+                ),
+              ),
+            ),
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.025,
+            ),
+            Container(
+              height: MediaQuery.of(context).size.height * 0.20,
+              width: MediaQuery.of(context).size.width * 0.85,
+              decoration: const BoxDecoration(
+                  color: Color.fromARGB(255, 158, 206, 244),
+                  borderRadius: BorderRadius.all(Radius.circular(25))
+              ),
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.03,
+                  ),
+                  Row(
+                    children: [
+                      SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.055
+                      ),
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.035,
+                        width: MediaQuery.of(context).size.width * 0.15,
+                        child: const FittedBox(
+                            fit: BoxFit.fitHeight,
+                            child: Text('Логин:')
                         ),
                       ),
-                      margin: const EdgeInsets.fromLTRB(0, 20, 0, 20),
-                    ),
-                    Stack(
-                      children: [
-                        Container(
-                          width: MediaQuery.of(context).size.width * 0.85,
-                          height: MediaQuery.of(context).size.height * 0.20,
-                          alignment: Alignment.center,
-                          decoration: const BoxDecoration(
-                            color: Color.fromARGB(255, 158, 206, 244),
-                            borderRadius: BorderRadius.all(Radius.circular(25)),
-                          ),
-                          child: Row(
-                            children: [
-                              Column(
-                                children: [
-                                  Container(
-                                    padding: EdgeInsets.only(top: MediaQuery.of(context).size.width * 0.04),
-                                    alignment: Alignment.center,
-                                    width: MediaQuery.of(context).size.width * 0.18,
-                                    height: MediaQuery.of(context).size.height * 0.08,
-                                    child: const Text(
-                                      "Логин",
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                         fontSize: 14,
-
-                                      ),
-                                    ),
-                                  ),
-                                  Container(
-                                    padding: EdgeInsets.only(top: MediaQuery.of(context).size.width * 0.04),
-                                    alignment: Alignment.center,
-                                    width: MediaQuery.of(context).size.width * 0.18,
-                                    height: MediaQuery.of(context).size.height * 0.08,
-                                    child: const Text(
-                                      "Пароль",
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                          fontSize: 14
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Column(
-                                children: [
-                                  Container(
-                                    //margin: EdgeInsets.only(top: MediaQuery.of(context).size.width * 0.04),
-                                    alignment: Alignment.center,
-                                    width: MediaQuery.of(context).size.width * 0.55,
-                                    height: MediaQuery.of(context).size.height * 0.06,
-                                    child: const TextField(
-                                      textAlign: TextAlign.center,
-                                      decoration: InputDecoration(
-                                        border: UnderlineInputBorder(),
-                                        hintText: 'Номер телефона или E-mail',
-                                        hintStyle: TextStyle(
-                                          fontSize: 12
-                                        )
-                                      ),
-                                    ),
-                                  ),
-                                  Container(
-                                    margin: EdgeInsets.only(top: MediaQuery.of(context).size.width * 0.04),
-                                    alignment: Alignment.center,
-                                    width: MediaQuery.of(context).size.width * 0.55,
-                                    height: MediaQuery.of(context).size.height * 0.06,
-                                    child: const TextField(
-                                      textAlign: TextAlign.center,
-                                      decoration: InputDecoration(
-                                        border: UnderlineInputBorder(),
-                                        hintText: 'Ваш пароль',
-                                        hintStyle: TextStyle(
-                                            fontSize: 12
-                                        )
-                                      ),
-                                    ),
-                                  )
-                                ],
-                              )
-                            ],
-                          ),
+                      SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.03
+                      ),
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.045,
+                        width: MediaQuery.of(context).size.width * 0.55,
+                        child: const TextField(
+                            autocorrect: false,
+                            textAlign: TextAlign.center,
+                            decoration: InputDecoration(
+                                border: OutlineInputBorder(),
+                                contentPadding: EdgeInsets.zero,
+                                hintText: "номер тел. или E-mail",
+                                hintStyle: TextStyle(
+                                    fontSize: 14
+                                )
+                            )
                         ),
-                      ],
+                      )
+                    ],
+                  ),
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.04,
+                  ),
+                  Row(
+                    children: [
+                      SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.055
+                      ),
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.035,
+                        width: MediaQuery.of(context).size.width * 0.15,
+                        child: const FittedBox(
+                            fit: BoxFit.fitHeight,
+                            child: Text('Пароль:')
+                        ),
+                      ),
+                      SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.03
+                      ),
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.045,
+                        width: MediaQuery.of(context).size.width * 0.55,
+                        child: const TextField(
+                            autocorrect: false,
+                            obscureText: true,
+                            textAlign: TextAlign.center,
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(),
+                              contentPadding: EdgeInsets.zero,
+                            )
+                        ),
+                      )
+                    ],
+                  )
+                ],
+              ),
+            ),
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.01,
+            ),
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.04,
+              child: FittedBox(
+                  fit: BoxFit.fitWidth,
+                  child: TextButton(
+                    onPressed: () {
+                      Navigator.pushNamed(
+                        context,
+                        'registration'
+                      );
+                    },
+                    child: const Text(
+                      "Регистрация",
+                      style: TextStyle(
+                        color: Color.fromARGB(255, 96, 197, 241),
+                      ),
                     ),
-                    Container(
-                      color: Colors.cyan,
+                  )
+              ),
+            ),
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.04,
+              child: FittedBox(
+                  fit: BoxFit.fitWidth,
+                  child: TextButton(
+                    onPressed: () {
+                      Navigator.pushNamed(
+                          context,
+                          'password_recovery'
+                      );
+                    },
+                    child: const Text(
+                      "Не помню пароль",
+                      style: TextStyle(
+                        color: Color.fromARGB(255, 96, 197, 241),
+                      ),
+                    ),
+                  )
+              ),
+            ),
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.04,
+            ),
+            ElevatedButton(
+              onPressed: () {},
+              child: Container(
+                height: MediaQuery.of(context).size.height * 0.07,
+                width: MediaQuery.of(context).size.width * 0.7,
+                alignment: Alignment.center,
+                child: SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.045,
+                  child: const FittedBox(
+                    fit: BoxFit.fitHeight,
+                    child: Text(
+                      "ВХОД",
+                      style: TextStyle(
+                          color: Colors.black
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              style: ButtonStyle(
+                backgroundColor:  MaterialStateProperty.all<Color>(const Color.fromARGB(255, 158, 206, 244)),
+                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0),
                     )
-                  ],
                 ),
               ),
-              Container(
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height * 0.10,
-                alignment: Alignment.topCenter,
-                child: Container(
-                  width: MediaQuery.of(context).size.width * 0.65,
-                  alignment: Alignment.center,
-                  decoration: const BoxDecoration(
-                    color: Color.fromARGB(255, 158, 206, 244),
-                    borderRadius: BorderRadius.all(Radius.circular(25))
-                  ),
-                  child: const Text(
-                    "Вход",
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 27
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-
+            ),
+          ]
+      ),
     );
   }
 }
