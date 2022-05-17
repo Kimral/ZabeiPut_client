@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'ui/CPasswordRecovery.dart';
 import 'ui/СAuthorization.dart';
 import 'ui/CRegistration.dart';
+import 'ui/CTermsOfUse.dart';
 
 void main() {
   runApp(const MyApp());
@@ -19,11 +20,12 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      initialRoute: 'registration',
+      initialRoute: 'authorization',
       routes: {
         'registration': (context) => const CRegistration(),
         'authorization': (context) => const CAuthorization(),
         'password_recovery': (context) => const CPasswordRecovery(),
+        'terms_of_use': (context) => const CTermsOfUse(),
       },
       home: const CAuthorization(),
     );

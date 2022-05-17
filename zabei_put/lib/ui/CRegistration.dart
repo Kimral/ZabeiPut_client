@@ -256,9 +256,9 @@ class _CRegistrationState extends State<CRegistration> {
                                 color: Colors.blue
                               ),
                               recognizer: TapGestureRecognizer()
-                                ..onTap = () async {
-                                  if (!await launchUrl(_url)) throw 'Could not launch $_url';
-                              },
+                                ..onTap = () {
+                                  Navigator.pushNamed(context, 'terms_of_use');
+                                },
                             ),
                           ],
                         ),
