@@ -167,7 +167,6 @@ class CAuthorization extends StatelessWidget {
             ),
             ElevatedButton(
               onPressed: () {
-                Navigator.pop(context);
                 Navigator.pushNamed(context, 'main_map');
               },
               child: Container(
