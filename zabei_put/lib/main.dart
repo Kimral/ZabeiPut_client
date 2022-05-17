@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:zabei_put/ui/CMainMap.dart';
 
 import 'ui/CPasswordRecovery.dart';
 import 'ui/СAuthorization.dart';
@@ -26,6 +27,7 @@ class MyApp extends StatelessWidget {
         'authorization': (context) => const CAuthorization(),
         'password_recovery': (context) => const CPasswordRecovery(),
         'terms_of_use': (context) => const CTermsOfUse(),
+        'main_map': (context) => const CMainMap(),
       },
       home: const CAuthorization(),
     );

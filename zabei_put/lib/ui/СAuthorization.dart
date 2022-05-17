@@ -166,7 +166,10 @@ class CAuthorization extends StatelessWidget {
               height: MediaQuery.of(context).size.height * 0.04,
             ),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.pop(context);
+                Navigator.pushNamed(context, 'main_map');
+              },
               child: Container(
                 height: MediaQuery.of(context).size.height * 0.07,
                 width: MediaQuery.of(context).size.width * 0.7,
