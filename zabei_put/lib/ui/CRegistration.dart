@@ -71,7 +71,8 @@ class _CRegistrationState extends State<CRegistration> {
                                 contentPadding: EdgeInsets.zero,
                                 hintText: "Номер телефона",
                                 hintStyle: TextStyle(
-                                    fontSize: 14
+                                  fontSize: 14,
+                                  fontFamily: "Open Sans Light"
                                 )
                             )
                         ),
@@ -97,7 +98,8 @@ class _CRegistrationState extends State<CRegistration> {
                                 contentPadding: EdgeInsets.zero,
                                 hintText: "Email",
                                 hintStyle: TextStyle(
-                                    fontSize: 14
+                                  fontSize: 14,
+                                  fontFamily: "Open Sans Light"
                                 )
                             )
                         ),
@@ -117,7 +119,7 @@ class _CRegistrationState extends State<CRegistration> {
             child: const FittedBox(
               fit: BoxFit.contain,
               child: Text(
-                  "Пароль"
+                "Пароль"
               ),
             ),
           ),
@@ -153,7 +155,8 @@ class _CRegistrationState extends State<CRegistration> {
                           decoration: InputDecoration(
                             hintText: "Пароль",
                             hintStyle: TextStyle(
-                              fontSize: 14
+                              fontSize: 14,
+                              fontFamily: "Open Sans Light"
                             ),
                             border: OutlineInputBorder(),
                             contentPadding: EdgeInsets.zero,
@@ -180,7 +183,8 @@ class _CRegistrationState extends State<CRegistration> {
                           decoration: InputDecoration(
                             hintText: "Повторите пароль",
                             hintStyle: TextStyle(
-                                fontSize: 14
+                              fontSize: 14,
+                              fontFamily: "Open Sans Light"
                             ),
                             border: OutlineInputBorder(),
                             contentPadding: EdgeInsets.zero,
@@ -247,13 +251,15 @@ class _CRegistrationState extends State<CRegistration> {
                             const TextSpan(
                               text: 'Я принимаю ',
                               style: TextStyle(
-                                  color: Colors.black
+                                color: Colors.black,
+                                fontFamily: "Open Sans Light"
                               ),
                             ),
                             TextSpan(
                               text: 'пользовательское соглашение',
                               style: const TextStyle(
-                                color: Colors.blue
+                                color: Colors.blue,
+                                fontFamily: "Open Sans Light"
                               ),
                               recognizer: TapGestureRecognizer()
                                 ..onTap = () {

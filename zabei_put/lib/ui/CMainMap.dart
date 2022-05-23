@@ -6,6 +6,7 @@ import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:flutter_map/flutter_map.dart';
 import "package:latlong2/latlong.dart";
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:zabei_put/tools/CEpsg3395.dart';
 
 class CMainMap extends StatefulWidget {
   @override
@@ -13,10 +14,10 @@ class CMainMap extends StatefulWidget {
 }
 
 class _CMainMapState extends State<CMainMap> {
-  final double _initFabHeight = 120.0;
+  final double _initFabHeight = 95;
   double _fabHeight = 0;
   double _panelHeightOpen = 0;
-  final double _panelHeightClosed = 95.0;
+  double _panelHeightClosed = 0;
 
   @override
   void initState() {
@@ -26,7 +27,8 @@ class _CMainMapState extends State<CMainMap> {
 
   @override
   Widget build(BuildContext context) {
-    _panelHeightOpen = MediaQuery.of(context).size.height * .80;
+    _panelHeightClosed = 75;
+    _panelHeightOpen = MediaQuery.of(context).size.height * 0.75;
 
     return Material(
       child: Stack(
@@ -39,16 +41,14 @@ class _CMainMapState extends State<CMainMap> {
             parallaxOffset: .5,
             body: _body(),
             panelBuilder: (sc) => _panel(sc),
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(18.0),
-                topRight: Radius.circular(18.0)),
+            borderRadius: const BorderRadius.only(
+                topLeft: const Radius.circular(18.0),
+                topRight: const Radius.circular(18.0)),
             onPanelSlide: (double pos) => setState(() {
               _fabHeight = pos * (_panelHeightOpen - _panelHeightClosed) +
                   _initFabHeight;
             }),
           ),
-
-          // the fab
           Positioned(
             right: 20.0,
             bottom: _fabHeight,
@@ -63,34 +63,17 @@ class _CMainMapState extends State<CMainMap> {
           ),
 
           Positioned(
-              top: 0,
-              child: ClipRRect(
-                  child: BackdropFilter(
-                      filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                      child: Container(
-                        width: MediaQuery.of(context).size.width,
-                        height: MediaQuery.of(context).padding.top,
-                        color: Colors.transparent,
-                      )))),
-
-          //the SlidingUpPanel Title
-          Positioned(
-            top: 52.0,
-            child: Container(
-              padding: const EdgeInsets.fromLTRB(24.0, 18.0, 24.0, 18.0),
-              child: Text(
-                "SlidingUpPanel Example",
-                style: TextStyle(fontWeight: FontWeight.w500),
-              ),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(24.0),
-                boxShadow: [
-                  BoxShadow(
-                      color: Color.fromRGBO(0, 0, 0, .25), blurRadius: 16.0)
-                ],
-              ),
-            ),
+            top: 0,
+            child: ClipRRect(
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).padding.top,
+                  color: Colors.transparent,
+                )
+              )
+            )
           ),
         ],
       ),
@@ -104,7 +87,7 @@ class _CMainMapState extends State<CMainMap> {
         child: ListView(
           controller: sc,
           children: <Widget>[
-            SizedBox(
+            const SizedBox(
               height: 12.0,
             ),
             Row(
@@ -115,98 +98,105 @@ class _CMainMapState extends State<CMainMap> {
                   height: 5,
                   decoration: BoxDecoration(
                       color: Colors.grey[300],
-                      borderRadius: BorderRadius.all(Radius.circular(12.0))),
+                      borderRadius: const BorderRadius.all(const Radius.circular(12.0))),
                 ),
               ],
             ),
-            SizedBox(
-              height: 18.0,
+            const SizedBox(
+              height: 6.0,
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
+              children: const <Widget>[
                 Text(
-                  "Explore Pittsburgh",
+                  "Нижний Тагил",
                   style: TextStyle(
-                    fontWeight: FontWeight.normal,
+                    fontWeight: FontWeight.w600,
                     fontSize: 24.0,
                   ),
                 ),
               ],
             ),
-            SizedBox(
-              height: 36.0,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: <Widget>[
-                _button("Popular", Icons.favorite, Colors.blue),
-                _button("Food", Icons.restaurant, Colors.red),
-                _button("Events", Icons.event, Colors.amber),
-                _button("More", Icons.more_horiz, Colors.green),
-              ],
-            ),
-            SizedBox(
+            const SizedBox(
               height: 36.0,
             ),
             Container(
               padding: const EdgeInsets.only(left: 24.0, right: 24.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text("Images",
-                      style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                      )),
-                  SizedBox(
+                children: [
+                  const Text(
+                    "Изображения",
+                    style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 20
+                    )
+                  ),
+                  const SizedBox(
                     height: 12.0,
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
-                      CachedNetworkImage(
-                        imageUrl:
-                        "https://images.fineartamerica.com/images-medium-large-5/new-pittsburgh-emmanuel-panagiotakis.jpg",
-                        height: 120.0,
-                        width: (MediaQuery.of(context).size.width - 48) / 2 - 2,
-                        fit: BoxFit.cover,
+                      GestureDetector(
+                        child: CachedNetworkImage(
+                          imageUrl: "https://nashural.ru/assets/uploads/4WNNhKdTuAiI5AklKfnYE8Hvuaa67OBj.jpg",
+                          height: 120.0,
+                          width: (MediaQuery.of(context).size.width - 48) / 2 - 2,
+                          fit: BoxFit.cover,
+                        ),
+                        onTap: null,
                       ),
-                      CachedNetworkImage(
-                        imageUrl:
-                        "https://cdn.pixabay.com/photo/2016/08/11/23/48/pnc-park-1587285_1280.jpg",
-                        width: (MediaQuery.of(context).size.width - 48) / 2 - 2,
-                        height: 120.0,
-                        fit: BoxFit.cover,
-                      ),
+                      GestureDetector(
+                        child: CachedNetworkImage(
+                          imageUrl: "https://geo-1.ru/wp-content/uploads/2018/10/0721.jpg",
+                          width: (MediaQuery.of(context).size.width - 48) / 2 - 2,
+                          height: 120.0,
+                          fit: BoxFit.cover,
+                        ),
+                        onTap: () {
+                          Navigator.pushNamed(context, 'photo_view');
+                        }
+                      )
                     ],
                   ),
                 ],
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 36.0,
             ),
             Container(
               padding: const EdgeInsets.only(left: 24.0, right: 24.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text("About",
-                      style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                      )),
+                children: const <Widget>[
+                  Text(
+                    "Описание",
+                    style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 20
+                    )
+                  ),
                   SizedBox(
                     height: 12.0,
                   ),
                   Text(
-                    """Pittsburgh is a city in the state of Pennsylvania in the United States, and is the county seat of Allegheny County. A population of about 302,407 (2018) residents live within the city limits, making it the 66th-largest city in the U.S. The metropolitan population of 2,324,743 is the largest in both the Ohio Valley and Appalachia, the second-largest in Pennsylvania (behind Philadelphia), and the 27th-largest in the U.S.\n\nPittsburgh is located in the southwest of the state, at the confluence of the Allegheny, Monongahela, and Ohio rivers. Pittsburgh is known both as "the Steel City" for its more than 300 steel-related businesses and as the "City of Bridges" for its 446 bridges. The city features 30 skyscrapers, two inclined railways, a pre-revolutionary fortification and the Point State Park at the confluence of the rivers. The city developed as a vital link of the Atlantic coast and Midwest, as the mineral-rich Allegheny Mountains made the area coveted by the French and British empires, Virginians, Whiskey Rebels, and Civil War raiders.\n\nAside from steel, Pittsburgh has led in manufacturing of aluminum, glass, shipbuilding, petroleum, foods, sports, transportation, computing, autos, and electronics. For part of the 20th century, Pittsburgh was behind only New York City and Chicago in corporate headquarters employment; it had the most U.S. stockholders per capita. Deindustrialization in the 1970s and 80s laid off area blue-collar workers as steel and other heavy industries declined, and thousands of downtown white-collar workers also lost jobs when several Pittsburgh-based companies moved out. The population dropped from a peak of 675,000 in 1950 to 370,000 in 1990. However, this rich industrial history left the area with renowned museums, medical centers, parks, research centers, and a diverse cultural district.\n\nAfter the deindustrialization of the mid-20th century, Pittsburgh has transformed into a hub for the health care, education, and technology industries. Pittsburgh is a leader in the health care sector as the home to large medical providers such as University of Pittsburgh Medical Center (UPMC). The area is home to 68 colleges and universities, including research and development leaders Carnegie Mellon University and the University of Pittsburgh. Google, Apple Inc., Bosch, Facebook, Uber, Nokia, Autodesk, Amazon, Microsoft and IBM are among 1,600 technology firms generating \$20.7 billion in annual Pittsburgh payrolls. The area has served as the long-time federal agency headquarters for cyber defense, software engineering, robotics, energy research and the nuclear navy. The nation's eighth-largest bank, eight Fortune 500 companies, and six of the top 300 U.S. law firms make their global headquarters in the area, while RAND Corporation (RAND), BNY Mellon, Nova, FedEx, Bayer, and the National Institute for Occupational Safety and Health (NIOSH) have regional bases that helped Pittsburgh become the sixth-best area for U.S. job growth.
-                  """,
+                    """В 1696 году в районе горы Высокой, а в 1702 году по берегам реки Выи сыном боярским Михаилом Бибиковым была найдена медная руда. 1696 год считается началом истории города. В 1714 году о приисках было доложено тогдашнему владельцу Уральских заводов Акинфию Демидову, вскоре после этого по указу царя Петра I им были основаны Тагильский и Выйский железоделательные заводы и на Урале началось производство чугуна, железа и меди. Руду брали на Высокогорском, Лебяжинском и Ивановском железных рудниках. В 1737 году медная руда была обнаружена и по берегам реки Лебяжки.
+
+8 (19) октября 1722 год считается датой основания Нижнего Тагила, когда на Выйском заводе была получена первая продукция — чугун. Основан династией Демидовых, которым до революции и принадлежали Тагильские заводы: «Верхне-Выйский» и «Тагильский». В это время мировую известность получает продукция тагильских железоделательных и медеплавильных заводов, известная под товарным знаком «Старый соболь». Легенда об использовании тагильской меди при создании статуи Свободы пока не находит документального подтверждения[13].
+
+Также Нижний Тагил широко известен в России своим народным промыслом тагильской росписи жестяных подносов. В 1833 году в Нижнем Тагиле крепостными изобретателями отцом и сыном Черепановыми (Ефим Алексеевич и Мирон Ефимович) были построены первые в России паровозы. Согласно легенде в 1800 году крепостной слесарь Ефим Артамонов сделал первый в мире велосипед с педалями и рулевым управлением.
+
+В 1807 году был образован Нижнетагильский горнозаводской округ. В него вошли заводы и рудники Демидовых[14]. В середине XIX века существенный вклад в развитие архитектуры Нижнего Тагила внесли архитекторы А. П. Чеботарёв, К. А. Луценко и А. З. Комаров[15][16].
+
+В 1918 году в Нижнем Тагиле в ходе Гражданской войны прошли крупные бои. Они были очень ожесточёнными и продолжались с 9 сентября по 22 октября 1918 года. В них участвовали 10 тысяч солдат Красной Армии и шесть тысяч Белой Гвардии, на стороне которых выступали также и части чехословацкого легиона. Установлено, что всего в сражениях за Нижний Тагил погибло около 400 чехословацких легионеров. В ноябре 2009 года, в Нижнем Тагиле открылся памятник павшим там чехословацким легионерам. На памятнике 67 имён воинов, которые удалось установить[17].""",
                     softWrap: true,
                   ),
                 ],
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 24,
             ),
           ],
@@ -223,14 +213,14 @@ class _CMainMapState extends State<CMainMap> {
             color: Colors.white,
           ),
           decoration:
-          BoxDecoration(color: color, shape: BoxShape.circle, boxShadow: [
+          BoxDecoration(color: color, shape: BoxShape.circle, boxShadow: const [
             BoxShadow(
               color: Color.fromRGBO(0, 0, 0, 0.15),
               blurRadius: 8.0,
             )
           ]),
         ),
-        SizedBox(
+        const SizedBox(
           height: 12.0,
         ),
         Text(label),
@@ -241,23 +231,36 @@ class _CMainMapState extends State<CMainMap> {
   Widget _body() {
     return FlutterMap(
       options: MapOptions(
-        center: LatLng(40.441589, -80.010948),
+        center: LatLng(57.9194, 59.965),
         zoom: 13,
-        maxZoom: 15,
+        maxZoom: 18,
+        minZoom: 4,
+        crs: const Epsg3395()
       ),
       layers: [
         TileLayerOptions(
-            urlTemplate: "https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}.png"),
-        MarkerLayerOptions(markers: [
-          Marker(
-              point: LatLng(40.441753, -80.011476),
-              builder: (ctx) => Icon(
-                Icons.location_on,
-                color: Colors.blue,
-                size: 48.0,
+          //urlTemplate: "https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}.png"),
+          //urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+          //urlTemplate: "https://core-sat.maps.yandex.net/tiles?l=sat&x={x}&y={y}&z={z}&scale=1&lang=ru_RU",
+          urlTemplate: "https://core-renderer-tiles.maps.yandex.net/tiles?l=map&x={x}&y={y}&z={z}&scale=1&lang=ru_RU",
+          subdomains: ['a', 'b', 'c'],
+        ),
+        MarkerLayerOptions(
+          markers: [
+            Marker(
+              point: LatLng(57.90700625662233,59.966960038409574),
+              builder: (ctx) => IconButton(
+                icon: const Icon(
+                  Icons.location_on,
+                  color: Colors.blue,
+                ),
+                onPressed: () {  },
+                iconSize: 25,
               ),
-              height: 60),
-        ]),
+              anchorPos: AnchorPos.align(AnchorAlign.top)
+            ),
+          ]
+        ),
       ],
     );
   }

@@ -5,7 +5,7 @@ import 'ui/CPasswordRecovery.dart';
 import 'ui/СAuthorization.dart';
 import 'ui/CRegistration.dart';
 import 'ui/CTermsOfUse.dart';
-
+import 'ui/CPhotoView.dart';
 
 void main() {
   runApp(const MyApp());
@@ -29,6 +29,7 @@ class MyApp extends StatelessWidget {
         'password_recovery': (context) => const CPasswordRecovery(),
         'terms_of_use': (context) => const CTermsOfUse(),
         'main_map': (context) => CMainMap(),
+        'photo_view' : (context) => const CPhotoViewPage(),
       },
       home: const CAuthorization(),
     );
