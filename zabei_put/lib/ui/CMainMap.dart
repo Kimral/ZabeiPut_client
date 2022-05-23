@@ -42,12 +42,79 @@ class _CMainMapState extends State<CMainMap> {
             body: _body(),
             panelBuilder: (sc) => _panel(sc),
             borderRadius: const BorderRadius.only(
-                topLeft: const Radius.circular(18.0),
-                topRight: const Radius.circular(18.0)),
+                topLeft: Radius.circular(18.0),
+                topRight: Radius.circular(18.0)),
             onPanelSlide: (double pos) => setState(() {
               _fabHeight = pos * (_panelHeightOpen - _panelHeightClosed) +
                   _initFabHeight;
             }),
+          ),
+          Row(
+            verticalDirection: VerticalDirection.up,
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              SizedBox(
+                height:MediaQuery.of(context).size.height * 0.06,
+                width: MediaQuery.of(context).size.width * 0.15,
+                child: FloatingActionButton(
+                  child: Icon(
+                    Icons.menu,
+                    color: Theme.of(context).primaryColor,
+                  ),
+                  onPressed: () {},
+                  backgroundColor: Colors.white,
+                ),
+              ),
+              Container(
+                height: MediaQuery.of(context).size.height * 0.07,
+                width: MediaQuery.of(context).size.width * 0.7,
+                decoration: const BoxDecoration(
+                    borderRadius: BorderRadius.only(
+                        bottomRight: Radius.circular(18.0),
+                        bottomLeft: Radius.circular(18.0)
+                    ),
+                    color: Color.fromARGB(255, 255, 255, 255),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey,
+                        spreadRadius: 3,
+                        blurRadius: 5,
+                        offset: Offset(0, 3), // changes position of shadow
+                      ),
+                    ]
+                ),
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.030,
+                      child: FittedBox(
+                        fit: BoxFit.contain,
+                        child: Text('Ваш адрес:'),
+                      ),
+                    ),
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.030,
+                      child: FittedBox(
+                        fit: BoxFit.contain,
+                        child: Text('Адрес Адрес Адрес'),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+              SizedBox(
+                height:MediaQuery.of(context).size.height * 0.06,
+                width: MediaQuery.of(context).size.width * 0.15,
+                child: FloatingActionButton(
+                  child: Icon(
+                    Icons.search,
+                    color: Theme.of(context).primaryColor,
+                  ),
+                  onPressed: () {},
+                  backgroundColor: Colors.white,
+                ),
+              ),
+            ]
           ),
           Positioned(
             right: 20.0,
@@ -61,7 +128,6 @@ class _CMainMapState extends State<CMainMap> {
               backgroundColor: Colors.white,
             ),
           ),
-
           Positioned(
             top: 0,
             child: ClipRRect(
