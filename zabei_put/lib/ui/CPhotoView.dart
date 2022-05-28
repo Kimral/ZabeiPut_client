@@ -13,10 +13,12 @@ class _CPhotoViewPageState extends State<CPhotoViewPage> {
   @override
   Widget build(BuildContext context) {
     didChangeDependencies();
-    return Material(
-      child: PhotoView(
-        imageProvider: const CachedNetworkImageProvider(
-          "https://geo-1.ru/wp-content/uploads/2018/10/0721.jpg"
+    return SafeArea(
+      child: Material(
+        child: PhotoView(
+          imageProvider: const CachedNetworkImageProvider(
+            "https://geo-1.ru/wp-content/uploads/2018/10/0721.jpg"
+          ),
         ),
       ),
     );

@@ -1,12 +1,16 @@
 import 'dart:ui';
+import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 import 'package:flutter_map/flutter_map.dart';
 import "package:latlong2/latlong.dart";
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:zabei_put/tools/CEpsg3395.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:location/location.dart';
 
 class CMainMap extends StatefulWidget {
   @override
@@ -19,10 +23,49 @@ class _CMainMapState extends State<CMainMap> {
   double _panelHeightOpen = 0;
   double _panelHeightClosed = 0;
 
+  Location location = new Location();
+  late bool _serviceEnabled;
+  late PermissionStatus _permissionGranted;
+  late LocationData _locationData;
+
   @override
   void initState() {
     super.initState();
     _fabHeight = _initFabHeight;
+    _checkLocationPermission();
+  }
+
+  void _checkLocationPermission() async {
+    bool perm = await _chechPermission();
+    if(!perm) {
+      bool grand = await _chechGrant();
+      if(!grand) {
+        return;
+      }
+    }
+    _locationData = await location.getLocation();
+  }
+
+  Future<bool> _chechPermission() async {
+    _serviceEnabled = await location.serviceEnabled();
+    if(!_serviceEnabled){
+      _serviceEnabled = await location.requestService();
+      if(!_serviceEnabled){
+        return false;
+      }
+    }
+    return true;
+  }
+
+  Future<bool> _chechGrant() async {
+    _permissionGranted = await location.hasPermission();
+    if(_permissionGranted == PermissionStatus.denied){
+      _permissionGranted = await location.requestPermission();
+      if(_permissionGranted != PermissionStatus.granted){
+        return false;
+      }
+    }
+    return true;
   }
 
   @override
@@ -30,45 +73,46 @@ class _CMainMapState extends State<CMainMap> {
     _panelHeightClosed = 75;
     _panelHeightOpen = MediaQuery.of(context).size.height * 0.75;
 
-    return Material(
-      child: Stack(
-        alignment: Alignment.topCenter,
-        children: <Widget>[
-          SlidingUpPanel(
-            maxHeight: _panelHeightOpen,
-            minHeight: _panelHeightClosed,
-            parallaxEnabled: true,
-            parallaxOffset: .5,
-            body: _body(),
-            panelBuilder: (sc) => _panel(sc),
-            borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(18.0),
-                topRight: Radius.circular(18.0)),
-            onPanelSlide: (double pos) => setState(() {
-              _fabHeight = pos * (_panelHeightOpen - _panelHeightClosed) +
-                  _initFabHeight;
-            }),
-          ),
-          Row(
-            verticalDirection: VerticalDirection.up,
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              SizedBox(
-                height:MediaQuery.of(context).size.height * 0.06,
-                width: MediaQuery.of(context).size.width * 0.15,
-                child: FloatingActionButton(
-                  child: Icon(
-                    Icons.menu,
-                    color: Theme.of(context).primaryColor,
-                  ),
-                  onPressed: () {},
-                  backgroundColor: Colors.white,
-                ),
-              ),
-              Container(
-                height: MediaQuery.of(context).size.height * 0.07,
-                width: MediaQuery.of(context).size.width * 0.7,
-                decoration: const BoxDecoration(
+    Timer.periodic(const Duration(seconds: 3), (timer) async {
+      bool flag = await _chechPermission();
+      if(flag) {
+        print("ok");
+        print(MediaQuery.of(context).size.height);
+        print(MediaQuery.of(context).size.width);
+      }
+      else {
+        print("no Permission");
+      }
+    });
+
+    return SafeArea(
+      child: Material(
+        child: Stack(
+          alignment: Alignment.topCenter,
+          children: <Widget>[
+            SlidingUpPanel(
+              maxHeight: _panelHeightOpen,
+              minHeight: _panelHeightClosed,
+              parallaxEnabled: true,
+              parallaxOffset: .5,
+              body: _body(),
+              panelBuilder: (sc) => _panel(sc),
+              borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(18.0),
+                  topRight: Radius.circular(18.0)),
+              onPanelSlide: (double pos) => setState(() {
+                _fabHeight = pos * (_panelHeightOpen - _panelHeightClosed) +
+                    _initFabHeight;
+              }),
+            ),
+            Row(
+
+
+              children: [
+                Container(
+                  height: MediaQuery.of(context).size.height * 0.07,
+                  width: MediaQuery.of(context).size.width,
+                  decoration: const BoxDecoration(
                     borderRadius: BorderRadius.only(
                         bottomRight: Radius.circular(18.0),
                         bottomLeft: Radius.circular(18.0)
@@ -82,66 +126,75 @@ class _CMainMapState extends State<CMainMap> {
                         offset: Offset(0, 3), // changes position of shadow
                       ),
                     ]
-                ),
-                child: Column(
-                  children: [
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.030,
-                      child: FittedBox(
-                        fit: BoxFit.contain,
-                        child: Text('Ваш адрес:'),
-                      ),
-                    ),
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.030,
-                      child: FittedBox(
-                        fit: BoxFit.contain,
-                        child: Text('Адрес Адрес Адрес'),
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              SizedBox(
-                height:MediaQuery.of(context).size.height * 0.06,
-                width: MediaQuery.of(context).size.width * 0.15,
-                child: FloatingActionButton(
-                  child: Icon(
-                    Icons.search,
-                    color: Theme.of(context).primaryColor,
                   ),
-                  onPressed: () {},
-                  backgroundColor: Colors.white,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    verticalDirection: VerticalDirection.down,
+                    children: [
+                      SizedBox(
+                        height:MediaQuery.of(context).size.height * 0.06,
+                        width: MediaQuery.of(context).size.width * 0.15,
+                        child: FloatingActionButton(
+                          elevation: 0,
+                          child: Icon(
+                            Icons.menu,
+                            color: Theme.of(context).primaryColor,
+                          ),
+                          onPressed: () {},
+                          backgroundColor: Colors.white,
+                        ),
+                      ),
+                      Column(
+                        children: [
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.030,
+                            child: FittedBox(
+                              fit: BoxFit.contain,
+                              child: Text('Ваш адрес:'),
+                            ),
+                          ),
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.030,
+                            child: FittedBox(
+                              fit: BoxFit.contain,
+                              child: Text('Адрес Адрес Адрес'),
+                            ),
+                          )
+                        ],
+                      ),
+                      SizedBox(
+                        height:MediaQuery.of(context).size.height * 0.06,
+                        width: MediaQuery.of(context).size.width * 0.15,
+                        child: FloatingActionButton(
+                          elevation: 0,
+                          child: Icon(
+                            Icons.search,
+                            color: Theme.of(context).primaryColor,
+                          ),
+                          onPressed: () {},
+                          backgroundColor: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ]
-          ),
-          Positioned(
-            right: 20.0,
-            bottom: _fabHeight,
-            child: FloatingActionButton(
-              child: Icon(
-                Icons.gps_fixed,
-                color: Theme.of(context).primaryColor,
-              ),
-              onPressed: () {},
-              backgroundColor: Colors.white,
+
+              ]
             ),
-          ),
-          Positioned(
-            top: 0,
-            child: ClipRRect(
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                child: Container(
-                  width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).padding.top,
-                  color: Colors.transparent,
-                )
-              )
-            )
-          ),
-        ],
+            Positioned(
+              right: 20.0,
+              bottom: _fabHeight,
+              child: FloatingActionButton(
+                child: Icon(
+                  Icons.gps_fixed,
+                  color: Theme.of(context).primaryColor,
+                ),
+                onPressed: () {},
+                backgroundColor: Colors.white,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -295,37 +348,96 @@ class _CMainMapState extends State<CMainMap> {
   }
 
   Widget _body() {
-    return FlutterMap(
+    return Stack(
+      children: [
+        FlutterMap(
+          options: MapOptions(
+            center: LatLng(57.9194, 59.965),
+            zoom: 13,
+            maxZoom: 18,
+            minZoom: 4,
+            crs: const Epsg3395(),
+          ),
+          children: [
+            TileLayerWidget(
+              options: TileLayerOptions(
+                  urlTemplate: "https://core-renderer-tiles.maps.yandex.net/tiles?l=map&x={x}&y={y}&z={z}&scale=1&lang=ru_RU",
+                  subdomains: ['a', 'b', 'c'],
+                  maxZoom: 19,
+                  minZoom: 0
+              ),
+            ),
+            MarkerLayerWidget(
+              options: MarkerLayerOptions(
+                  markers: [
+                    Marker(
+                        rotate: true,
+                        rotateAlignment: Alignment.bottomCenter,
+                        point: LatLng(57.90700625662233,59.966960038409574),
+                        builder: (ctx) => IconButton(
+                          icon: const Icon(
+                            Icons.location_on,
+                            color: Colors.blue,
+                          ),
+                          onPressed: () {  },
+                          iconSize: 25,
+                        ),
+                        anchorPos: AnchorPos.align(AnchorAlign.top)
+                    ),
+                  ]
+              ),
+            ),
+          ],
+        ),
+        Container(
+          height: MediaQuery.of(context).size.height - _panelHeightClosed,
+          alignment: Alignment.bottomLeft,
+          child: Container(
+            color: Colors.transparent,
+            child: Image(
+                height: 50,
+                image: AssetImage('assets/Images/yandex.png')
+            ),
+          ),
+        ),
+      ],
+    );
+    FlutterMap(
       options: MapOptions(
         center: LatLng(57.9194, 59.965),
         zoom: 13,
         maxZoom: 18,
         minZoom: 4,
-        crs: const Epsg3395()
+        crs: const Epsg3395(),
       ),
-      layers: [
-        TileLayerOptions(
-          //urlTemplate: "https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}.png"),
-          //urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-          //urlTemplate: "https://core-sat.maps.yandex.net/tiles?l=sat&x={x}&y={y}&z={z}&scale=1&lang=ru_RU",
-          urlTemplate: "https://core-renderer-tiles.maps.yandex.net/tiles?l=map&x={x}&y={y}&z={z}&scale=1&lang=ru_RU",
-          subdomains: ['a', 'b', 'c'],
+      children: [
+        TileLayerWidget(
+          options: TileLayerOptions(
+              urlTemplate: "https://core-renderer-tiles.maps.yandex.net/tiles?l=map&x={x}&y={y}&z={z}&scale=1&lang=ru_RU",
+              subdomains: ['a', 'b', 'c'],
+              maxZoom: 19,
+              minZoom: 0
+          ),
         ),
-        MarkerLayerOptions(
-          markers: [
-            Marker(
-              point: LatLng(57.90700625662233,59.966960038409574),
-              builder: (ctx) => IconButton(
-                icon: const Icon(
-                  Icons.location_on,
-                  color: Colors.blue,
+        MarkerLayerWidget(
+          options: MarkerLayerOptions(
+              markers: [
+                Marker(
+                    rotate: true,
+                    rotateAlignment: Alignment.bottomCenter,
+                    point: LatLng(57.90700625662233,59.966960038409574),
+                    builder: (ctx) => IconButton(
+                      icon: const Icon(
+                        Icons.location_on,
+                        color: Colors.blue,
+                      ),
+                      onPressed: () {  },
+                      iconSize: 25,
+                    ),
+                    anchorPos: AnchorPos.align(AnchorAlign.top)
                 ),
-                onPressed: () {  },
-                iconSize: 25,
-              ),
-              anchorPos: AnchorPos.align(AnchorAlign.top)
-            ),
-          ]
+              ]
+          ),
         ),
       ],
     );

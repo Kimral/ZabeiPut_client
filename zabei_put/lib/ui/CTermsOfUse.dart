@@ -5,10 +5,12 @@ class CTermsOfUse extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          "Пользовательское соглашение"
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text(
+            "Пользовательское соглашение"
+          ),
         ),
       ),
     );

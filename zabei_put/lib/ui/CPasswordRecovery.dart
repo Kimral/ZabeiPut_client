@@ -5,13 +5,15 @@ class CPasswordRecovery extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: Text("Восстановление пароля"),
-        ),
-        body: Container(
+    return SafeArea(
+      child: Scaffold(
+          appBar: AppBar(
+            title: Text("Восстановление пароля"),
+          ),
+          body: Container(
 
-        )
+          )
+      ),
     );
   }
 }
