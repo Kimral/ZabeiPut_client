@@ -9,7 +9,6 @@ import 'package:flutter_map/flutter_map.dart';
 import "package:latlong2/latlong.dart";
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:zabei_put/tools/CEpsg3395.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:location/location.dart';
 
 class CMainMap extends StatefulWidget {
@@ -23,68 +22,32 @@ class _CMainMapState extends State<CMainMap> {
   double _panelHeightOpen = 0;
   double _panelHeightClosed = 0;
 
-  Location location = new Location();
-  late bool _serviceEnabled;
-  late PermissionStatus _permissionGranted;
-  late LocationData _locationData;
+  Location _location = Location();
+
+  double _longitude = 0;
+  double _latitude = 0;
 
   @override
   void initState() {
     super.initState();
     _fabHeight = _initFabHeight;
-    _checkLocationPermission();
-  }
-
-  void _checkLocationPermission() async {
-    bool perm = await _chechPermission();
-    if(!perm) {
-      bool grand = await _chechGrant();
-      if(!grand) {
-        return;
-      }
-    }
-    _locationData = await location.getLocation();
-  }
-
-  Future<bool> _chechPermission() async {
-    _serviceEnabled = await location.serviceEnabled();
-    if(!_serviceEnabled){
-      _serviceEnabled = await location.requestService();
-      if(!_serviceEnabled){
-        return false;
-      }
-    }
-    return true;
-  }
-
-  Future<bool> _chechGrant() async {
-    _permissionGranted = await location.hasPermission();
-    if(_permissionGranted == PermissionStatus.denied){
-      _permissionGranted = await location.requestPermission();
-      if(_permissionGranted != PermissionStatus.granted){
-        return false;
-      }
-    }
-    return true;
+    Timer.periodic(Duration(seconds: 3), (_) {
+      setState(() {
+        _location.getLocation().then((p) {
+          setState((){
+            _longitude = p.longitude as double;
+            _latitude = p.latitude as double;
+            print('${p.longitude}, ${p.latitude}');
+          });
+        });
+      });
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     _panelHeightClosed = 75;
     _panelHeightOpen = MediaQuery.of(context).size.height * 0.75;
-
-    Timer.periodic(const Duration(seconds: 3), (timer) async {
-      bool flag = await _chechPermission();
-      if(flag) {
-        print("ok");
-        print(MediaQuery.of(context).size.height);
-        print(MediaQuery.of(context).size.width);
-      }
-      else {
-        print("no Permission");
-      }
-    });
-
     return SafeArea(
       child: Material(
         child: Stack(
@@ -106,8 +69,6 @@ class _CMainMapState extends State<CMainMap> {
               }),
             ),
             Row(
-
-
               children: [
                 Container(
                   height: MediaQuery.of(context).size.height * 0.07,
@@ -128,7 +89,7 @@ class _CMainMapState extends State<CMainMap> {
                     ]
                   ),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     verticalDirection: VerticalDirection.down,
                     children: [
                       SizedBox(
@@ -150,14 +111,15 @@ class _CMainMapState extends State<CMainMap> {
                             height: MediaQuery.of(context).size.height * 0.030,
                             child: FittedBox(
                               fit: BoxFit.contain,
-                              child: Text('Ваш адрес:'),
+                              child: Text('Ваши координаты:'),
                             ),
                           ),
                           SizedBox(
                             height: MediaQuery.of(context).size.height * 0.030,
+                            width: MediaQuery.of(context).size.width * 0.7,
                             child: FittedBox(
                               fit: BoxFit.contain,
-                              child: Text('Адрес Адрес Адрес'),
+                              child: Text((_latitude != 0) ? "${_longitude}, ${_latitude}" : "Loading")
                             ),
                           )
                         ],
@@ -189,7 +151,8 @@ class _CMainMapState extends State<CMainMap> {
                   Icons.gps_fixed,
                   color: Theme.of(context).primaryColor,
                 ),
-                onPressed: () {},
+                onPressed: () {
+                },
                 backgroundColor: Colors.white,
               ),
             ),
@@ -369,74 +332,36 @@ class _CMainMapState extends State<CMainMap> {
             ),
             MarkerLayerWidget(
               options: MarkerLayerOptions(
-                  markers: [
-                    Marker(
-                        rotate: true,
-                        rotateAlignment: Alignment.bottomCenter,
-                        point: LatLng(57.90700625662233,59.966960038409574),
-                        builder: (ctx) => IconButton(
-                          icon: const Icon(
-                            Icons.location_on,
-                            color: Colors.blue,
-                          ),
-                          onPressed: () {  },
-                          iconSize: 25,
+                markers: [
+                  Marker(
+                      rotate: true,
+                      rotateAlignment: Alignment.bottomCenter,
+                      point: LatLng(57.90700625662233,59.966960038409574),
+                      builder: (ctx) => IconButton(
+                        icon: const Icon(
+                          Icons.location_on,
+                          color: Colors.blue,
                         ),
-                        anchorPos: AnchorPos.align(AnchorAlign.top)
-                    ),
-                  ]
+                        onPressed: () {  },
+                        iconSize: 25,
+                      ),
+                      anchorPos: AnchorPos.align(AnchorAlign.top)
+                  ),
+                ]
               ),
             ),
           ],
         ),
         Container(
-          height: MediaQuery.of(context).size.height - _panelHeightClosed,
           alignment: Alignment.bottomLeft,
+          height: MediaQuery.of(context).size.height - _initFabHeight,
           child: Container(
             color: Colors.transparent,
             child: Image(
-                height: 50,
-                image: AssetImage('assets/Images/yandex.png')
+              alignment: Alignment.topCenter,
+              height: MediaQuery.of(context).size.height * 0.05,
+              image: AssetImage('assets/Images/yandex.png')
             ),
-          ),
-        ),
-      ],
-    );
-    FlutterMap(
-      options: MapOptions(
-        center: LatLng(57.9194, 59.965),
-        zoom: 13,
-        maxZoom: 18,
-        minZoom: 4,
-        crs: const Epsg3395(),
-      ),
-      children: [
-        TileLayerWidget(
-          options: TileLayerOptions(
-              urlTemplate: "https://core-renderer-tiles.maps.yandex.net/tiles?l=map&x={x}&y={y}&z={z}&scale=1&lang=ru_RU",
-              subdomains: ['a', 'b', 'c'],
-              maxZoom: 19,
-              minZoom: 0
-          ),
-        ),
-        MarkerLayerWidget(
-          options: MarkerLayerOptions(
-              markers: [
-                Marker(
-                    rotate: true,
-                    rotateAlignment: Alignment.bottomCenter,
-                    point: LatLng(57.90700625662233,59.966960038409574),
-                    builder: (ctx) => IconButton(
-                      icon: const Icon(
-                        Icons.location_on,
-                        color: Colors.blue,
-                      ),
-                      onPressed: () {  },
-                      iconSize: 25,
-                    ),
-                    anchorPos: AnchorPos.align(AnchorAlign.top)
-                ),
-              ]
           ),
         ),
       ],
