@@ -1,5 +1,8 @@
+import 'dart:ffi';
+import 'dart:math';
 import 'dart:ui';
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -10,6 +13,9 @@ import "package:latlong2/latlong.dart";
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:zabei_put/tools/CEpsg3395.dart';
 import 'package:location/location.dart';
+
+import 'package:http/http.dart' as http;
+import 'package:http/retry.dart';
 
 class CMainMap extends StatefulWidget {
   @override
@@ -23,22 +29,55 @@ class _CMainMapState extends State<CMainMap> {
   double _panelHeightClosed = 0;
 
   Location _location = Location();
+  
+  Marker _positionMarker = Marker(point: LatLng(0,0), builder: (context) { return Icon(Icons.man); });
 
   double _longitude = 0;
   double _latitude = 0;
+
+  String _address = "";
+  void getAdress() async
+  {
+    final client = RetryClient(http.Client());
+    try
+    {
+      var url = Uri.parse('https://nominatim.openstreetmap.org/reverse?format=json&lat=${_latitude}&lon=${_longitude}&addressdetails=1');
+      var response = await http.post(url);
+      var JsonResponse = jsonDecode(response.body);
+      _address = JsonResponse['address']['city'] + ", " +
+                 JsonResponse['address']['road'] + ", " +
+                 JsonResponse['address']['house_number'];
+    }
+    finally
+    {
+      client.close();
+    }
+  }
 
   @override
   void initState() {
     super.initState();
     _fabHeight = _initFabHeight;
-    Timer.periodic(Duration(seconds: 3), (_) {
+    _location.onLocationChanged.listen((LocationData currentLocation) {
       setState(() {
         _location.getLocation().then((p) {
-          setState((){
-            _longitude = p.longitude as double;
-            _latitude = p.latitude as double;
-            print('${p.longitude}, ${p.latitude}');
-          });
+          _longitude = p.longitude as double;
+          _latitude = p.latitude as double;
+          _positionMarker = Marker(
+            width: 35.0,
+            height: 35.0,
+            rotate: true,
+            point: LatLng(p.latitude as double, p.longitude as double),
+            builder: (ctx) => Container(
+              child: CircleAvatar(
+                child: Icon(
+                  Icons.account_circle_rounded,
+                  size: 35,
+                ),
+              )
+            ),
+          );
+          getAdress();
         });
       });
     });
@@ -111,7 +150,7 @@ class _CMainMapState extends State<CMainMap> {
                             height: MediaQuery.of(context).size.height * 0.030,
                             child: FittedBox(
                               fit: BoxFit.contain,
-                              child: Text('Ваши координаты:'),
+                              child: Text('Ваш адрес:'),
                             ),
                           ),
                           SizedBox(
@@ -119,7 +158,7 @@ class _CMainMapState extends State<CMainMap> {
                             width: MediaQuery.of(context).size.width * 0.7,
                             child: FittedBox(
                               fit: BoxFit.contain,
-                              child: Text((_latitude != 0) ? "${_longitude}, ${_latitude}" : "Loading")
+                              child: Text((_address.isEmpty) ? "Loading" : "${_address}")
                             ),
                           )
                         ],
@@ -324,28 +363,29 @@ class _CMainMapState extends State<CMainMap> {
           children: [
             TileLayerWidget(
               options: TileLayerOptions(
-                  urlTemplate: "https://core-renderer-tiles.maps.yandex.net/tiles?l=map&x={x}&y={y}&z={z}&scale=1&lang=ru_RU",
-                  subdomains: ['a', 'b', 'c'],
-                  maxZoom: 19,
-                  minZoom: 0
+                urlTemplate: "https://core-renderer-tiles.maps.yandex.net/tiles?l=map&x={x}&y={y}&z={z}&scale=1&lang=ru_RU",
+                subdomains: ['a', 'b', 'c'],
+                maxZoom: 19,
+                minZoom: 0
               ),
             ),
             MarkerLayerWidget(
               options: MarkerLayerOptions(
                 markers: [
+                  _positionMarker,
                   Marker(
-                      rotate: true,
-                      rotateAlignment: Alignment.bottomCenter,
-                      point: LatLng(57.90700625662233,59.966960038409574),
-                      builder: (ctx) => IconButton(
-                        icon: const Icon(
-                          Icons.location_on,
-                          color: Colors.blue,
-                        ),
-                        onPressed: () {  },
-                        iconSize: 25,
+                    rotate: true,
+                    rotateAlignment: Alignment.bottomCenter,
+                    point: LatLng(57.90700625662233,59.966960038409574),
+                    builder: (ctx) => IconButton(
+                      icon: const Icon(
+                        Icons.location_on,
+                        color: Colors.blue,
                       ),
-                      anchorPos: AnchorPos.align(AnchorAlign.top)
+                      onPressed: () {  },
+                      iconSize: 25,
+                    ),
+                    anchorPos: AnchorPos.align(AnchorAlign.top)
                   ),
                 ]
               ),
@@ -360,7 +400,7 @@ class _CMainMapState extends State<CMainMap> {
             child: Image(
               alignment: Alignment.topCenter,
               height: MediaQuery.of(context).size.height * 0.05,
-              image: AssetImage('assets/Images/yandex.png')
+              image: const AssetImage('assets/Images/yandex.png')
             ),
           ),
         ),
